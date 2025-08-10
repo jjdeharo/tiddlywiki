@@ -28,12 +28,6 @@ Plugin para **TiddlyWiki** que añade un botón de **copiar** y un menú despleg
 - **📋 Copiar**: copia el contenido del bloque al portapapeles.
 - **Enviar a…**: selecciona un servicio y el contenido se abrirá automáticamente en una nueva pestaña con la URL correspondiente.
 
-## desinstalación
-
-1. Abre **Más → Complementos** en TiddlyWiki.
-2. Localiza `codecopy-plugin-ai` y haz clic en **Desinstalar**.
-3. Guarda el wiki.
-
 ## compatibilidad
 
 - Requiere **TiddlyWiki 5.2.0** o superior.
