@@ -22,6 +22,7 @@ Plugin para **TiddlyWiki** que añade un botón de **copiar** y un menú despleg
 1. Descarga el archivo [`codecopy-plugin-ai.tid`](./codecopy-plugin-ai.tid).
 2. Abre tu TiddlyWiki y arrástralo dentro o impórtalo desde el menú **Import**.
 3. Guarda el wiki para que el plugin quede instalado.
+4. Recarga la página para empezar a utilizarlo.
 
 ## Uso
 
@@ -33,7 +34,7 @@ Plugin para **TiddlyWiki** que añade un botón de **copiar** y un menú despleg
 1. Ve a **Panel de control → Plugins**.
 2. Abre el plugin **codecopy-plugin-ai**.
 3. En el menú del tiddler, selecciona **Eliminar** (borrar).
-4. Guarda el wiki.
+4. Guarda el wiki y recarga la página.
 
 ## Compatibilidad
 
