@@ -1,0 +1,24 @@
+title: $:/plugins/common/codecopy
+type: application/json
+plugin-type: plugin
+description: Botón copiar para bloques de código (``` ) y citas (<<< ... <<<); la copia de citas excluye el botón
+author: common
+created: 20250809
+modified: 20250809
+
+{
+  "tiddlers": {
+    "$:/plugins/common/codecopy/startup": {
+      "title": "$:/plugins/common/codecopy/startup",
+      "type": "application/javascript",
+      "module-type": "startup",
+      "text": "/*\\\ntitle: $:/plugins/common/codecopy/startup\ntype: application/javascript\nmodule-type: startup\n\\*/\n(function(){\n\"use strict\";\n\nexports.name = \"codecopy-startup\";\nexports.after = [\"startup\"];\nexports.synchronous = true;\n\nfunction ensureQuoteContentWrapper(bq){\n  // Wrap existing children (except already-wrapped) so we can copy only the content\n  if(bq.querySelector(\":scope > .tw-codecopy-content\")) return bq.querySelector(\":scope > .tw-codecopy-content\");\n  var wrapper = document.createElement(\"div\");\n  wrapper.className = \"tw-codecopy-content\";\n  // move all current child nodes into wrapper\n  while(bq.firstChild){\n    wrapper.appendChild(bq.firstChild);\n  }\n  bq.appendChild(wrapper);\n  return wrapper;\n}\n\nfunction attach(container, getText, opts){\n  if(container.dataset.copyBtnAttached) return;\n  container.dataset.copyBtnAttached = \"yes\";\n  container.classList.add(\"tw-codecopy-pre\");\n\n  var btn = document.createElement(\"button\");\n  btn.type = \"button\";\n  btn.className = \"tw-codecopy-btn tc-btn-invisible\";\n  btn.textContent = \"📋 Copiar\";\n  btn.title = \"Copiar\";\n\n  function bubble(msg){\n    var note = document.createElement(\"span\");\n    note.className = \"tw-codecopy-bubble\";\n    note.textContent = msg;\n    container.appendChild(note);\n    setTimeout(function(){ note.remove(); }, 1200);\n  }\n\n  btn.addEventListener(\"click\", function(){\n    var text = getText();\n    if(navigator.clipboard && navigator.clipboard.writeText){\n      navigator.clipboard.writeText(text)\n        .then(function(){ bubble(\"Copiado\"); })\n        .catch(function(){});\n    } else {\n      var r = document.createRange();\n      // Fallback: select only the content node if provided\n      if(opts && opts.selectNode){\n        r.selectNodeContents(opts.selectNode);\n      } else {\n        r.selectNodeContents(container);\n      }\n      var sel = window.getSelection();\n      sel.removeAllRanges(); sel.addRange(r);\n      var ok = false; try { ok = document.execCommand(\"copy\"); } catch(e){}\n      sel.removeAllRanges();\n      if(ok) bubble(\"Copiado\");\n    }\n  });\n\n  container.appendChild(btn);\n}\n\nfunction scan(root){\n  var scope = root || document;\n\n  // ``` code blocks\n  scope.querySelectorAll(\"pre > code\").forEach(function(code){\n    attach(code.parentElement, function(){ return code.innerText; }, { selectNode: code });\n  });\n\n  // <<< block quotes -> <blockquote>\n  scope.querySelectorAll(\"blockquote\").forEach(function(bq){\n    var content = ensureQuoteContentWrapper(bq);\n    attach(bq, function(){ return content.innerText; }, { selectNode: content });\n  });\n}\n\nexports.startup = function(){\n  scan(document);\n  $tw.rootWidget.addEventListener(\"th-page-refreshed\", function(){ scan(document); });\n  var mo = new MutationObserver(function(muts){\n    muts.forEach(function(m){\n      if(m.addedNodes){\n        m.addedNodes.forEach(function(n){ if(n.nodeType===1){ scan(n); } });\n      }\n    });\n  });\n  mo.observe(document.body, {childList:true, subtree:true});\n};\n\n})();"
+    },
+    "$:/plugins/common/codecopy/styles": {
+      "title": "$:/plugins/common/codecopy/styles",
+      "type": "text/css",
+      "tags": "$:/tags/Stylesheet",
+      "text": ".tw-codecopy-pre { position: relative; padding-top: 1.6rem; }\n.tw-codecopy-pre > code, .tw-codecopy-pre > .tw-codecopy-content { display: block; }\n.tw-codecopy-btn {\n  position: absolute;\n  top: 0.35rem; right: 0.35rem;\n  padding: 0.15rem 0.5rem;\n  font-size: 0.85em;\n  cursor: pointer;\n  opacity: 0.7;\n  border-radius: 0.4rem;\n}\n.tw-codecopy-pre:hover .tw-codecopy-btn { opacity: 1; }\n.tw-codecopy-bubble{\n  position:absolute; top:0.35rem; right:6.2rem;\n  padding: 0.1rem 0.4rem;\n  font-size:.8em;\n  background: rgba(255, 249, 196, 0.8);\n  border-radius:.35rem;\n}"
+    }
+  }
+}
